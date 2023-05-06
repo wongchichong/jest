@@ -1,0 +1,48 @@
+lockfileVersion: 5.4
+
+specifiers:
+  '@jest/test-result': workspace:^
+  '@jest/test-utils': workspace:^
+  '@types/graceful-fs': ^4.1.3
+  graceful-fs: ^4.2.9
+  jest-haste-map: workspace:^
+  pnpm: ^8.4.0
+  slash: ^3.0.0
+
+dependencies:
+  '@jest/test-result': link:../jest-test-result
+  graceful-fs: 4.2.11
+  jest-haste-map: link:../jest-haste-map
+  pnpm: 8.4.0
+  slash: 3.0.0
+
+devDependencies:
+  '@jest/test-utils': link:../test-utils
+  '@types/graceful-fs': 4.1.6
+
+packages:
+
+  /@types/graceful-fs/4.1.6:
+    resolution: {integrity: sha512-Sig0SNORX9fdW+bQuTEovKj3uHcUL6LQKbCrrqb1X7J6/ReAbhCXRAhc+SMejhLELFj2QcyuxmUooZ4bt5ReSw==}
+    dependencies:
+      '@types/node': 18.16.3
+    dev: true
+
+  /@types/node/18.16.3:
+    resolution: {integrity: sha512-OPs5WnnT1xkCBiuQrZA4+YAV4HEJejmHneyraIaxsbev5yCEr6KMwINNFP9wQeFIw8FWcoTqF3vQsa5CDaI+8Q==}
+    dev: true
+
+  /graceful-fs/4.2.11:
+    resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
+    dev: false
+
+  /pnpm/8.4.0:
+    resolution: {integrity: sha512-oW5jpFgCmXHIVOU5HZLBWGBtCH7K4JSRdpk7/f+Dtp+KhUsX5NQaWzzYyU9TX7eAsfYMko179133gbUS+JTrMw==}
+    engines: {node: '>=16.14'}
+    hasBin: true
+    dev: false
+
+  /slash/3.0.0:
+    resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
+    engines: {node: '>=8'}
+    dev: false

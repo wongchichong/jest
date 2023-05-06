@@ -7,23 +7,33 @@
     "directory": "packages/jest-changed-files"
   },
   "license": "MIT",
-  "main": "./build/index.js",
+  "main": "./build/index.cjs.js",
+  "module": "./build/index.es.js",
+  "browser": "./build/index.umd.js",
+
   "types": "./build/index.d.ts",
   "exports": {
     ".": {
       "types": "./build/index.d.ts",
-      "default": "./build/index.js"
+      "default": "./build/index.es.js",
+      "require": "./build/index.cjs.js",
+      "import": "./build/index.es.js"
     },
     "./package.json": "./package.json"
   },
   "dependencies": {
     "execa": "^5.0.0",
-    "p-limit": "^3.1.0"
+    "p-limit": "^3.1.0",
+    "pnpm": "^8.4.0"
   },
   "engines": {
     "node": "^14.15.0 || ^16.10.0 || >=18.0.0"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "vite": "^4.3.4",
+    "vite-plugin-dts": "^2.3.0"
   }
 }

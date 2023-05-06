@@ -7,12 +7,17 @@
     "directory": "packages/jest-test-result"
   },
   "license": "MIT",
-  "main": "./build/index.js",
+  "main": "./build/index.cjs.js",
+  "module": "./build/index.es.js",
+  "browser": "./build/index.umd.js",
+
   "types": "./build/index.d.ts",
   "exports": {
     ".": {
       "types": "./build/index.d.ts",
-      "default": "./build/index.js"
+      "default": "./build/index.es.js",
+      "require": "./build/index.cjs.js",
+      "import": "./build/index.es.js"
     },
     "./package.json": "./package.json"
   },
@@ -20,11 +25,14 @@
     "@jest/console": "workspace:^",
     "@jest/types": "workspace:^",
     "@types/istanbul-lib-coverage": "^2.0.0",
-    "collect-v8-coverage": "^1.0.0"
+    "collect-v8-coverage": "^1.0.0",
+    "pnpm": "^8.4.0"
   },
   "devDependencies": {
     "jest-haste-map": "workspace:^",
-    "jest-resolve": "workspace:^"
+    "jest-resolve": "workspace:^",
+    "vite": "^4.3.4",
+    "vite-plugin-dts": "^2.3.0"
   },
   "engines": {
     "node": "^14.15.0 || ^16.10.0 || >=18.0.0"

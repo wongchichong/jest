@@ -88,6 +88,7 @@ export default class CoverageReporter extends BaseReporter {
             maxCols: process.stdout.columns || Infinity,
             ...additionalOptions,
           })
+          //@ts-ignore
           .execute(reportContext);
       });
       aggregatedResults.coverageMap = map;
@@ -107,7 +108,7 @@ export default class CoverageReporter extends BaseReporter {
   private async _addUntestedFiles(
     testContexts: Set<TestContext>,
   ): Promise<void> {
-    const files: Array<{config: Config.ProjectConfig; path: string}> = [];
+    const files: Array<{config: Config.ProjectConfig; path: string;}> = [];
 
     testContexts.forEach(context => {
       const config = context.config;
@@ -244,7 +245,7 @@ export default class CoverageReporter extends BaseReporter {
               if (threshold * -1 < actualUncovered) {
                 errors.push(
                   `Jest: Uncovered count for ${key} (${actualUncovered}) ` +
-                    `exceeds ${name} threshold (${-1 * threshold})`,
+                  `exceeds ${name} threshold (${-1 * threshold})`,
                 );
               }
             } else if (actual < threshold) {
@@ -264,8 +265,8 @@ export default class CoverageReporter extends BaseReporter {
       };
       const coveredFiles = map.files();
       const thresholdGroups = Object.keys(coverageThreshold);
-      const groupTypeByThresholdGroup: {[index: string]: string} = {};
-      const filesByGlob: {[index: string]: Array<string>} = {};
+      const groupTypeByThresholdGroup: {[index: string]: string;} = {};
+      const filesByGlob: {[index: string]: Array<string>;} = {};
 
       const coveredFilesSortedIntoThresholdGroup = coveredFiles.reduce<
         Array<[string, string | undefined]>
@@ -279,7 +280,7 @@ export default class CoverageReporter extends BaseReporter {
           const suffix =
             (thresholdGroup.endsWith(path.sep) ||
               (process.platform === 'win32' && thresholdGroup.endsWith('/'))) &&
-            !resolvedThresholdGroup.endsWith(path.sep)
+              !resolvedThresholdGroup.endsWith(path.sep)
               ? path.sep
               : '';
           const absoluteThresholdGroup = `${resolvedThresholdGroup}${suffix}`;
@@ -462,12 +463,12 @@ export default class CoverageReporter extends BaseReporter {
             fileTransform?.wrapperLength ?? 0,
             fileTransform && sourcemapContent
               ? {
-                  originalSource: fileTransform.originalCode,
-                  source: fileTransform.code,
-                  sourceMap: {
-                    sourcemap: {file: res.url, ...sourcemapContent},
-                  },
-                }
+                originalSource: fileTransform.originalCode,
+                source: fileTransform.code,
+                sourceMap: {
+                  sourcemap: {file: res.url, ...sourcemapContent},
+                },
+              }
               : {source: fs.readFileSync(res.url, 'utf8')},
           );
 
@@ -483,6 +484,7 @@ export default class CoverageReporter extends BaseReporter {
 
       const map = istanbulCoverage.createCoverageMap({});
 
+      //@ts-ignore
       transformedCoverage.forEach(res => map.merge(res));
 
       const reportContext = istanbulReport.createContext({

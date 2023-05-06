@@ -7,12 +7,17 @@
     "directory": "packages/jest-console"
   },
   "license": "MIT",
-  "main": "./build/index.js",
+  "main": "./build/index.cjs.js",
+  "module": "./build/index.es.js",
+  "browser": "./build/index.umd.js",
+
   "types": "./build/index.d.ts",
   "exports": {
     ".": {
       "types": "./build/index.d.ts",
-      "default": "./build/index.js"
+      "default": "./build/index.es.js",
+      "require": "./build/index.cjs.js",
+      "import": "./build/index.es.js"
     },
     "./package.json": "./package.json"
   },
@@ -22,10 +27,13 @@
     "chalk": "^4.0.0",
     "jest-message-util": "workspace:^",
     "jest-util": "workspace:^",
+    "pnpm": "^8.4.0",
     "slash": "^3.0.0"
   },
   "devDependencies": {
-    "@jest/test-utils": "workspace:^"
+    "@jest/test-utils": "workspace:^",
+    "vite": "^4.3.4",
+    "vite-plugin-dts": "^2.3.0"
   },
   "engines": {
     "node": "^14.15.0 || ^16.10.0 || >=18.0.0"

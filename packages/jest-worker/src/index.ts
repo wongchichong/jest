@@ -11,7 +11,7 @@ import {
   cpus,
 } from 'os';
 import {isAbsolute} from 'path';
-import {fileURLToPath} from 'url';
+import {URL, fileURLToPath} from 'url';
 import Farm from './Farm';
 import WorkerPool from './WorkerPool';
 import type {

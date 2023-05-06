@@ -1,0 +1,21 @@
+lockfileVersion: 5.4
+
+specifiers:
+  '@sinclair/typebox': ^0.25.16
+  pnpm: ^8.4.0
+
+dependencies:
+  '@sinclair/typebox': 0.25.24
+  pnpm: 8.4.0
+
+packages:
+
+  /@sinclair/typebox/0.25.24:
+    resolution: {integrity: sha512-XJfwUVUKDHF5ugKwIcxEgc9k8b7HbznCp6eUfWgu710hMPNIO4aw4/zB5RogDQz8nd6gyCDpU9O/m6qYEWY6yQ==}
+    dev: false
+
+  /pnpm/8.4.0:
+    resolution: {integrity: sha512-oW5jpFgCmXHIVOU5HZLBWGBtCH7K4JSRdpk7/f+Dtp+KhUsX5NQaWzzYyU9TX7eAsfYMko179133gbUS+JTrMw==}
+    engines: {node: '>=16.14'}
+    hasBin: true
+    dev: false

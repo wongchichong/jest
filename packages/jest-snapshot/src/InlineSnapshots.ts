@@ -33,6 +33,7 @@ const {
   templateElement,
   templateLiteral,
   traverse,
+  //@ts-ignore
   traverseFast,
 } =
   // @ts-expect-error requireOutside Babel transform
@@ -165,11 +166,11 @@ const saveSnapshotsForFile = (
 
   const newSourceFile = prettier
     ? runPrettier(
-        prettier,
-        sourceFilePath,
-        sourceFileWithSnapshots,
-        snapshotMatcherNames,
-      )
+      prettier,
+      sourceFilePath,
+      sourceFileWithSnapshots,
+      snapshotMatcherNames,
+    )
     : sourceFileWithSnapshots;
 
   if (newSourceFile !== sourceFile) {
@@ -179,14 +180,14 @@ const saveSnapshotsForFile = (
 
 const groupSnapshotsBy =
   (createKey: (inlineSnapshot: InlineSnapshot) => string) =>
-  (snapshots: Array<InlineSnapshot>) =>
-    snapshots.reduce<Record<string, Array<InlineSnapshot>>>(
-      (object, inlineSnapshot) => {
-        const key = createKey(inlineSnapshot);
-        return {...object, [key]: (object[key] || []).concat(inlineSnapshot)};
-      },
-      {},
-    );
+    (snapshots: Array<InlineSnapshot>) =>
+      snapshots.reduce<Record<string, Array<InlineSnapshot>>>(
+        (object, inlineSnapshot) => {
+          const key = createKey(inlineSnapshot);
+          return {...object, [key]: (object[key] || []).concat(inlineSnapshot)};
+        },
+        {},
+      );
 
 const groupSnapshotsByFrame = groupSnapshotsBy(({frame: {line, column}}) =>
   typeof line === 'number' && typeof column === 'number'
@@ -335,69 +336,69 @@ const createFormattingParser =
     snapshotMatcherNames: Array<string>,
     inferredParser: PrettierParserName,
   ): PrettierCustomParser =>
-  (text, parsers, options) => {
-    // Workaround for https://github.com/prettier/prettier/issues/3150
-    options.parser = inferredParser;
+    (text, parsers, options) => {
+      // Workaround for https://github.com/prettier/prettier/issues/3150
+      options.parser = inferredParser;
 
-    const ast = parsers[inferredParser](text, options);
-    traverse(ast, (node: Node, ancestors: TraversalAncestors) => {
-      if (node.type !== 'CallExpression') return;
+      const ast = parsers[inferredParser](text, options);
+      traverse(ast, (node: Node, ancestors: TraversalAncestors) => {
+        if (node.type !== 'CallExpression') return;
 
-      const {arguments: args, callee} = node;
-      if (
-        callee.type !== 'MemberExpression' ||
-        callee.property.type !== 'Identifier' ||
-        !snapshotMatcherNames.includes(callee.property.name) ||
-        !callee.loc ||
-        callee.computed
-      ) {
-        return;
-      }
-
-      let snapshotIndex: number | undefined;
-      let snapshot: string | undefined;
-      for (let i = 0; i < args.length; i++) {
-        const node = args[i];
-        if (node.type === 'TemplateLiteral') {
-          snapshotIndex = i;
-          snapshot = node.quasis[0].value.raw;
+        const {arguments: args, callee} = node;
+        if (
+          callee.type !== 'MemberExpression' ||
+          callee.property.type !== 'Identifier' ||
+          !snapshotMatcherNames.includes(callee.property.name) ||
+          !callee.loc ||
+          callee.computed
+        ) {
+          return;
         }
-      }
-      if (snapshot === undefined) {
-        return;
-      }
 
-      const parent = ancestors[ancestors.length - 1].node;
-      const startColumn =
-        isAwaitExpression(parent) && parent.loc
-          ? parent.loc.start.column
-          : callee.loc.start.column;
+        let snapshotIndex: number | undefined;
+        let snapshot: string | undefined;
+        for (let i = 0; i < args.length; i++) {
+          const node = args[i];
+          if (node.type === 'TemplateLiteral') {
+            snapshotIndex = i;
+            snapshot = node.quasis[0].value.raw;
+          }
+        }
+        if (snapshot === undefined) {
+          return;
+        }
 
-      const useSpaces = !options.useTabs;
-      snapshot = indent(
-        snapshot,
-        Math.ceil(
-          useSpaces
-            ? startColumn / (options.tabWidth ?? 1)
-            : // Each tab is 2 characters.
+        const parent = ancestors[ancestors.length - 1].node;
+        const startColumn =
+          isAwaitExpression(parent) && parent.loc
+            ? parent.loc.start.column
+            : callee.loc.start.column;
+
+        const useSpaces = !options.useTabs;
+        snapshot = indent(
+          snapshot,
+          Math.ceil(
+            useSpaces
+              ? startColumn / (options.tabWidth ?? 1)
+              : // Each tab is 2 characters.
               startColumn / 2,
-        ),
-        useSpaces ? ' '.repeat(options.tabWidth ?? 1) : '\t',
-      );
+          ),
+          useSpaces ? ' '.repeat(options.tabWidth ?? 1) : '\t',
+        );
 
-      const replacementNode = templateLiteral(
-        [
-          templateElement({
-            raw: snapshot,
-          }),
-        ],
-        [],
-      );
-      args[snapshotIndex!] = replacementNode;
-    });
+        const replacementNode = templateLiteral(
+          [
+            templateElement({
+              raw: snapshot,
+            }),
+          ],
+          [],
+        );
+        args[snapshotIndex!] = replacementNode;
+      });
 
-    return ast;
-  };
+      return ast;
+    };
 
 const simpleDetectParser = (filePath: string): PrettierParserName => {
   const extname = path.extname(filePath);

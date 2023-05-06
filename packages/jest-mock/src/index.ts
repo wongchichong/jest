@@ -999,7 +999,9 @@ export class ModuleMocker {
       if (
         'object' in restore &&
         'property' in restore &&
+      //@ts-ignore
         restore.object === object &&
+        //@ts-ignore
         restore.property === propertyKey
       ) {
         return restore as ReplacedPropertyRestorer<T, K>;

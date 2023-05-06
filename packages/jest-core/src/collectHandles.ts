@@ -42,7 +42,8 @@ function stackIsFromUser(stack: string) {
 
 const alwaysActive = () => true;
 
-// @ts-expect-error: doesn't exist in v12 typings
+// ts-expect-error: doesn't exist in v12 typings
+//@ts-ignore
 const hasWeakRef = typeof WeakRef === 'function';
 
 const asyncSleep = promisify(setTimeout);
@@ -68,7 +69,7 @@ function runGC() {
 export default function collectHandles(): HandleCollectionResult {
   const activeHandles = new Map<
     number,
-    {error: Error; isActive: () => boolean}
+    {error: Error; isActive: () => boolean;}
   >();
   const hook = asyncHooks.createHook({
     destroy(asyncId) {
@@ -115,7 +116,8 @@ export default function collectHandles(): HandleCollectionResult {
         // Handle that supports hasRef
         if ('hasRef' in resource) {
           if (hasWeakRef) {
-            // @ts-expect-error: doesn't exist in v12 typings
+            // ts-expect-error: doesn't exist in v12 typings
+            //@ts-ignore
             const ref = new WeakRef(resource);
             isActive = () => {
               return ref.deref()?.hasRef() ?? false;

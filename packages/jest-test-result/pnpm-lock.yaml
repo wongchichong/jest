@@ -1,0 +1,37 @@
+lockfileVersion: 5.4
+
+specifiers:
+  '@jest/console': workspace:^
+  '@jest/types': workspace:^
+  '@types/istanbul-lib-coverage': ^2.0.0
+  collect-v8-coverage: ^1.0.0
+  jest-haste-map: workspace:^
+  jest-resolve: workspace:^
+  pnpm: ^8.4.0
+
+dependencies:
+  '@jest/console': link:../jest-console
+  '@jest/types': link:../jest-types
+  '@types/istanbul-lib-coverage': 2.0.4
+  collect-v8-coverage: 1.0.1
+  pnpm: 8.4.0
+
+devDependencies:
+  jest-haste-map: link:../jest-haste-map
+  jest-resolve: link:../jest-resolve
+
+packages:
+
+  /@types/istanbul-lib-coverage/2.0.4:
+    resolution: {integrity: sha512-z/QT1XN4K4KYuslS23k62yDIDLwLFkzxOuMplDtObz0+y7VqJCaO2o+SPwHCvLFZh7xazvvoor2tA/hPz9ee7g==}
+    dev: false
+
+  /collect-v8-coverage/1.0.1:
+    resolution: {integrity: sha512-iBPtljfCNcTKNAto0KEtDfZ3qzjJvqE3aTGZsbhjSBlorqpXJlaWWtPO35D+ZImoC3KWejX64o+yPGxhWSTzfg==}
+    dev: false
+
+  /pnpm/8.4.0:
+    resolution: {integrity: sha512-oW5jpFgCmXHIVOU5HZLBWGBtCH7K4JSRdpk7/f+Dtp+KhUsX5NQaWzzYyU9TX7eAsfYMko179133gbUS+JTrMw==}
+    engines: {node: '>=16.14'}
+    hasBin: true
+    dev: false

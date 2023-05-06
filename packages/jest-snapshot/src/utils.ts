@@ -222,6 +222,7 @@ export const saveSnapshotFile = (
 
 const isAnyOrAnything = (input: object) =>
   '$$typeof' in input &&
+  //@ts-ignore
   input.$$typeof === Symbol.for('jest.asymmetricMatcher') &&
   ['Any', 'Anything'].includes(input.constructor.name);
 

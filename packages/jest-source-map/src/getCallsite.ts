@@ -54,6 +54,7 @@ export default function getCallsite(
   sourceMaps?: SourceMapRegistry | null,
 ): callsites.CallSite {
   const levelAfterThisCall = level + 1;
+  //@ts-ignore
   const stack = callsites()[levelAfterThisCall];
   const sourceMapFileName = sourceMaps?.get(stack.getFileName() ?? '');
 

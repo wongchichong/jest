@@ -1,6 +1,6 @@
 {
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   },
   "editor.rulers": [80],
   "editor.codeActionsOnSave": {
@@ -10,5 +10,6 @@
   "jest.jestCommandLine": "yarn jest",
   "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
   "typescript.format.semicolons": "insert",
-  "typescript.tsdk": "node_modules/typescript/lib"
+"typescript.tsdk": "node_modules/typescript/lib",
+"editor.tabSize": 2
 }

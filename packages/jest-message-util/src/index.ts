@@ -5,12 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import * as path from 'path';
-import {fileURLToPath} from 'url';
-import {types} from 'util';
-import {codeFrameColumns} from '@babel/code-frame';
+// import * as path from 'path';
+// import {fileURLToPath} from 'url';
+// import {types} from 'util';
+// import {codeFrameColumns} from '@babel/code-frame';
 import chalk = require('chalk');
-import * as fs from 'graceful-fs';
+// import * as fs from 'graceful-fs';
 import micromatch = require('micromatch');
 import slash = require('slash');
 import StackUtils = require('stack-utils');
@@ -42,8 +42,8 @@ export type StackTraceOptions = {
   noCodeFrame?: boolean;
 };
 
-const PATH_NODE_MODULES = `${path.sep}node_modules${path.sep}`;
-const PATH_JEST_PACKAGES = `${path.sep}jest${path.sep}packages${path.sep}`;
+const PATH_NODE_MODULES = `/node_modules/`;
+const PATH_JEST_PACKAGES = `/jest/packages/`;
 
 // filter for noisy stack trace lines
 const JASMINE_IGNORE =
@@ -76,22 +76,22 @@ const trim = (string: string) => (string || '').trim();
 const trimPaths = (string: string) =>
   string.match(STACK_PATH_REGEXP) ? trim(string) : string;
 
-const getRenderedCallsite = (
-  fileContent: string,
-  line: number,
-  column?: number,
-) => {
-  let renderedCallsite = codeFrameColumns(
-    fileContent,
-    {start: {column, line}},
-    {highlightCode: true},
-  );
+// const getRenderedCallsite = (
+//   fileContent: string,
+//   line: number,
+//   column?: number,
+// ) => {
+//   let renderedCallsite = codeFrameColumns(
+//     fileContent,
+//     {start: {column, line}},
+//     {highlightCode: true},
+//   );
 
-  renderedCallsite = indentAllLines(renderedCallsite);
+//   renderedCallsite = indentAllLines(renderedCallsite);
 
-  renderedCallsite = `\n${renderedCallsite}\n`;
-  return renderedCallsite;
-};
+//   renderedCallsite = `\n${renderedCallsite}\n`;
+//   return renderedCallsite;
+// };
 
 const blankStringRegexp = /^\s*$/;
 
@@ -151,10 +151,14 @@ export const formatExecError = (
         : `thrown: ${prettyFormat(error, {maxDepth: 3})}`;
     if ('cause' in error) {
       const prefix = '\n\nCause:\n';
+      //@ts-ignore
       if (typeof error.cause === 'string' || typeof error.cause === 'number') {
+        //@ts-ignore
         cause += `${prefix}${error.cause}`;
       } else if (
+        //@ts-ignore
         types.isNativeError(error.cause) ||
+        //@ts-ignore
         error.cause instanceof Error
       ) {
         /* `isNativeError` is used, because the error might come from another realm.
@@ -163,6 +167,7 @@ export const formatExecError = (
          [verror](https://www.npmjs.com/package/verror) or [axios](https://axios-http.com).
         */
         const formatted = formatExecError(
+          //@ts-ignore
           error.cause,
           config,
           options,
@@ -173,7 +178,9 @@ export const formatExecError = (
         cause += `${prefix}${formatted}`;
       }
     }
+    //@ts-ignore
     if ('errors' in error && Array.isArray(error.errors)) {
+      //@ts-ignore
       for (const subError of error.errors) {
         subErrors.push(
           formatExecError(
@@ -228,8 +235,8 @@ export const formatExecError = (
   const subErrorStr =
     subErrors.length > 0
       ? indentAllLines(
-          `\n\nErrors contained in AggregateError:\n${subErrors.join('\n')}`,
-        )
+        `\n\nErrors contained in AggregateError:\n${subErrors.join('\n')}`,
+      )
       : '';
 
   return `${title + messageToUse + stack + cause + subErrorStr}\n`;
@@ -297,7 +304,8 @@ export const formatPath = (
     return line;
   }
 
-  let filePath = slash(path.relative(config.rootDir, match[2]));
+  // let filePath = slash(path.relative(config.rootDir, match[2]));
+  let filePath = slash(config.rootDir + "/" + match[2]);
   // highlight paths from the current test file
   if (
     (config.testMatch &&
@@ -325,7 +333,8 @@ export const getTopFrame = (lines: Array<string>): Frame | null => {
 
     if (parsedFrame && parsedFrame.file) {
       if (parsedFrame.file.startsWith('file://')) {
-        parsedFrame.file = slash(fileURLToPath(parsedFrame.file));
+        // parsedFrame.file = slash(fileURLToPath(parsedFrame.file));
+        parsedFrame.file = slash(parsedFrame.file);
       }
       return parsedFrame as Frame;
     }
@@ -343,27 +352,28 @@ export const formatStackTrace = (
   const lines = getStackTraceLines(stack, options);
   let renderedCallsite = '';
   const relativeTestPath = testPath
-    ? slash(path.relative(config.rootDir, testPath))
+    // ? slash(path.relative(config.rootDir, testPath))
+      ? slash(config.rootDir +"/"+ testPath)
     : null;
 
-  if (!options.noStackTrace && !options.noCodeFrame) {
-    const topFrame = getTopFrame(lines);
-    if (topFrame) {
-      const {column, file: filename, line} = topFrame;
+  // if (!options.noStackTrace && !options.noCodeFrame) {
+  //   const topFrame = getTopFrame(lines);
+  //   if (topFrame) {
+  //     const {column, file: filename, line} = topFrame;
 
-      if (line && filename && path.isAbsolute(filename)) {
-        let fileContent;
-        try {
-          // TODO: check & read HasteFS instead of reading the filesystem:
-          // see: https://github.com/facebook/jest/pull/5405#discussion_r164281696
-          fileContent = fs.readFileSync(filename, 'utf8');
-          renderedCallsite = getRenderedCallsite(fileContent, line, column);
-        } catch {
-          // the file does not exist or is inaccessible, we ignore
-        }
-      }
-    }
-  }
+  //     if (line && filename && path.isAbsolute(filename)) {
+  //       let fileContent;
+  //       try {
+  //         // TODO: check & read HasteFS instead of reading the filesystem:
+  //         // see: https://github.com/facebook/jest/pull/5405#discussion_r164281696
+  //         fileContent = fs.readFileSync(filename, 'utf8');
+  //         renderedCallsite = getRenderedCallsite(fileContent, line, column);
+  //       } catch {
+  //         // the file does not exist or is inaccessible, we ignore
+  //       }
+  //     }
+  //   }
+  // }
 
   const stacktrace = lines
     .filter(Boolean)
@@ -389,12 +399,15 @@ type FailedResults = Array<{
 
 function isErrorOrStackWithCause(
   errorOrStack: Error | string,
-): errorOrStack is Error & {cause: Error | string} {
+): errorOrStack is Error & {cause: Error | string;} {
   return (
     typeof errorOrStack !== 'string' &&
     'cause' in errorOrStack &&
+    //@ts-ignore
     (typeof errorOrStack.cause === 'string' ||
+      //@ts-ignore
       types.isNativeError(errorOrStack.cause) ||
+      //@ts-ignore
       errorOrStack.cause instanceof Error)
   );
 }
@@ -413,8 +426,8 @@ function formatErrorStack(
   stack = options.noStackTrace
     ? ''
     : `${STACK_TRACE_COLOR(
-        formatStackTrace(stack, config, options, testPath),
-      )}\n`;
+      formatStackTrace(stack, config, options, testPath),
+    )}\n`;
 
   message = checkForCommonEnvironmentErrors(message);
   message = indentAllLines(message);
@@ -440,15 +453,18 @@ function failureDetailsToErrorOrStack(
   if (!failureDetails) {
     return content;
   }
-  if (types.isNativeError(failureDetails) || failureDetails instanceof Error) {
-    return failureDetails; // receiving raw errors for jest-circus
-  }
+  // if (types.isNativeError(failureDetails) || failureDetails instanceof Error) {
+  //   return failureDetails; // receiving raw errors for jest-circus
+  // }
   if (
     typeof failureDetails === 'object' &&
     'error' in failureDetails &&
+    //@ts-ignore
     (types.isNativeError(failureDetails.error) ||
+      //@ts-ignore
       failureDetails.error instanceof Error)
   ) {
+    //@ts-ignore
     return failureDetails.error; // receiving instances of FailedAssertion for jest-jasmine
   }
   return content;
@@ -487,10 +503,10 @@ export const formatResultsErrors = (
 
       const title = `${chalk.bold.red(
         TITLE_INDENT +
-          TITLE_BULLET +
-          result.ancestorTitles.join(ANCESTRY_SEPARATOR) +
-          (result.ancestorTitles.length ? ANCESTRY_SEPARATOR : '') +
-          result.title,
+        TITLE_BULLET +
+        result.ancestorTitles.join(ANCESTRY_SEPARATOR) +
+        (result.ancestorTitles.length ? ANCESTRY_SEPARATOR : '') +
+        result.title,
       )}\n`;
 
       return `${title}\n${formatErrorStack(
@@ -518,7 +534,7 @@ const removeBlankErrorLine = (str: string) =>
 // to format it.
 export const separateMessageFromStack = (
   content: string,
-): {message: string; stack: string} => {
+): {message: string; stack: string;} => {
   if (!content) {
     return {message: '', stack: ''};
   }

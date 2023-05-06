@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "babel-plugin-jest-hoist": "workspace:^",
-    "babel-preset-current-node-syntax": "^1.0.0"
+    "babel-preset-current-node-syntax": "^1.0.0",
+    "pnpm": "^8.4.0"
   },
   "peerDependencies": {
     "@babel/core": "^7.0.0"
@@ -24,5 +25,9 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "vite": "^4.3.4",
+    "vite-plugin-dts": "^2.3.0"
   }
 }

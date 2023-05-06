@@ -7,12 +7,17 @@
     "directory": "packages/jest-fake-timers"
   },
   "license": "MIT",
-  "main": "./build/index.js",
+  "main": "./build/index.cjs.js",
+  "module": "./build/index.es.js",
+  "browser": "./build/index.umd.js",
+
   "types": "./build/index.d.ts",
   "exports": {
     ".": {
       "types": "./build/index.d.ts",
-      "default": "./build/index.js"
+      "default": "./build/index.es.js",
+      "require": "./build/index.cjs.js",
+      "import": "./build/index.es.js"
     },
     "./package.json": "./package.json"
   },
@@ -22,11 +27,14 @@
     "@types/node": "*",
     "jest-message-util": "workspace:^",
     "jest-mock": "workspace:^",
-    "jest-util": "workspace:^"
+    "jest-util": "workspace:^",
+    "pnpm": "^8.4.0"
   },
   "devDependencies": {
     "@jest/test-utils": "workspace:^",
-    "@types/sinonjs__fake-timers": "^8.1.2"
+    "@types/sinonjs__fake-timers": "^8.1.2",
+    "vite": "^4.3.4",
+    "vite-plugin-dts": "^2.3.0"
   },
   "engines": {
     "node": "^14.15.0 || ^16.10.0 || >=18.0.0"

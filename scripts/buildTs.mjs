@@ -18,6 +18,7 @@ import {getPackagesWithTsConfig} from './buildUtils.mjs';
 
 const packagesWithTs = getPackagesWithTsConfig();
 
+debugger
 const {stdout: allWorkspacesString} = await execa('yarn', [
   'workspaces',
   'list',
@@ -156,7 +157,7 @@ const args = [
 console.log(chalk.inverse(' Building TypeScript definition files '));
 
 try {
-  await execa('yarn', args, {stdio: 'inherit'});
+  await execa('pnpm', args, {stdio: 'inherit'});
   console.log(
     chalk.inverse.green(' Successfully built TypeScript definition files '),
   );

@@ -51,6 +51,7 @@ api-extractor.json
 !**/.yarn/sdks
 !**/.yarn/versions
 **/.pnp.*
+**/.pnpm
 
 crowdin-cli.jar
 

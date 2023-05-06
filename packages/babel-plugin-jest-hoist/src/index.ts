@@ -103,7 +103,7 @@ const ALLOWED_IDENTIFIERS = new Set<string>(
 const IDVisitor = {
   ReferencedIdentifier(
     path: NodePath<Identifier>,
-    {ids}: {ids: Set<NodePath<Identifier>>},
+    {ids}: {ids: Set<NodePath<Identifier>>;},
   ) {
     ids.add(path);
   },
@@ -175,8 +175,8 @@ FUNCTIONS.mock = args => {
             const imported = binding.path.node.imported;
             if (
               importDecl.node.source.value === JEST_GLOBALS_MODULE_NAME &&
-              (isIdentifier(imported) ? imported.name : imported.value) ===
-                JEST_GLOBALS_MODULE_JEST_EXPORT_NAME
+              (isIdentifier(imported) ? imported.name : (imported as any).value) ===
+              JEST_GLOBALS_MODULE_JEST_EXPORT_NAME
             ) {
               isAllowedIdentifier = true;
               // Imports are already hoisted, so we don't need to add it
@@ -188,14 +188,14 @@ FUNCTIONS.mock = args => {
         if (!isAllowedIdentifier) {
           throw id.buildCodeFrameError(
             'The module factory of `jest.mock()` is not allowed to ' +
-              'reference any out-of-scope variables.\n' +
-              `Invalid variable access: ${name}\n` +
-              `Allowed objects: ${Array.from(ALLOWED_IDENTIFIERS).join(
-                ', ',
-              )}.\n` +
-              'Note: This is a precaution to guard against uninitialized mock ' +
-              'variables. If it is ensured that the mock is required lazily, ' +
-              'variable names prefixed with `mock` (case insensitive) are permitted.\n',
+            'reference any out-of-scope variables.\n' +
+            `Invalid variable access: ${name}\n` +
+            `Allowed objects: ${Array.from(ALLOWED_IDENTIFIERS).join(
+              ', ',
+            )}.\n` +
+            'Note: This is a precaution to guard against uninitialized mock ' +
+            'variables. If it is ensured that the mock is required lazily, ' +
+            'variable names prefixed with `mock` (case insensitive) are permitted.\n',
             ReferenceError,
           );
         }
@@ -280,7 +280,7 @@ const extractJestObjExprIfHoistable = (expr: NodePath): JestObjInfo | null => {
   const jestObjExpr = isJestObject(object)
     ? object
     : // The Jest object could be returned from another call since the functions are all chainable.
-      extractJestObjExprIfHoistable(object)?.path;
+    extractJestObjExprIfHoistable(object)?.path;
   if (!jestObjExpr) {
     return null;
   }
@@ -328,6 +328,7 @@ export default function jestHoist(): PluginObj<{
         this.jestObjGetterIdentifier =
           program.scope.generateUidIdentifier('getJestObj');
 
+        //@ts-ignore
         program.unshiftContainer('body', [
           createJestObjectGetter({
             GETTER_NAME: this.jestObjGetterIdentifier.name,
@@ -363,6 +364,7 @@ export default function jestHoist(): PluginObj<{
 
       function visitBlock(block: NodePath<BlockStatement> | NodePath<Program>) {
         // use a temporary empty statement instead of the real first statement, which may itself be hoisted
+        //@ts-ignore
         const [varsHoistPoint, callsHoistPoint] = block.unshiftContainer(
           'body',
           [emptyStatement(), emptyStatement()],
@@ -371,6 +373,7 @@ export default function jestHoist(): PluginObj<{
           CallExpression: visitCallExpr,
           VariableDeclarator: visitVariableDeclarator,
           // do not traverse into nested blocks, or we'll hoist calls in there out to this block
+          //@ts-ignore
           blacklist: ['BlockStatement'],
         });
         callsHoistPoint.remove();
