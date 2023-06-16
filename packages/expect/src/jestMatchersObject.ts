@@ -14,6 +14,7 @@ import type {
   MatcherState,
   MatchersObject,
   SyncExpectationResult,
+  WrappedType,
 } from './types';
 
 // Global matchers object holds the list of available matchers and
@@ -53,13 +54,14 @@ export const setState = <State extends MatcherState = MatcherState>(
 export const getMatchers = (): MatchersObject =>
   (globalThis as any)[JEST_MATCHERS_OBJECT].matchers;
 
-export const setMatchers = (
-  matchers: MatchersObject,
+
+export const setMatchers = <T, E>(
+  matchers: T,
   isInternal: boolean,
-  expect: Expect,
-): void => {
-  Object.keys(matchers).forEach(key => {
-    const matcher = matchers[key];
+  expect: Expect<E>,
+) => {
+  Object.keys((matchers as any)).forEach(key => {
+    const matcher = (matchers as any)[key];
 
     if (typeof matcher !== 'function') {
       throw new TypeError(
@@ -124,6 +126,7 @@ export const setMatchers = (
   });
 
   Object.assign((globalThis as any)[JEST_MATCHERS_OBJECT].matchers, matchers);
+  return expect as Expect<E & WrappedType<T>>; //& T & {not: T;};
 };
 
 export const getCustomEqualityTesters = (): Array<Tester> =>

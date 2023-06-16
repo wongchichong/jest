@@ -1,0 +1,109 @@
+lockfileVersion: 5.4
+
+specifiers:
+  '@jest/core': workspace:^
+  '@jest/types': workspace:^
+  '@tsd/typescript': ^4.9.0
+  import-local: ^3.0.2
+  jest-cli: workspace:^
+  pnpm: ^8.4.0
+  tsd-lite: ^0.7.0
+
+dependencies:
+  '@jest/core': link:../jest-core
+  '@jest/types': link:../jest-types
+  import-local: 3.1.0
+  jest-cli: link:../jest-cli
+  pnpm: 8.4.0
+
+devDependencies:
+  '@tsd/typescript': 4.9.5
+  tsd-lite: 0.7.0_@tsd+typescript@4.9.5
+
+packages:
+
+  /@tsd/typescript/4.9.5:
+    resolution: {integrity: sha512-+UgxOvJUl5rQdPFSSOOwhmSmpThm8DJ3HwHxAOq5XYe7CcmG1LcM2QeqWwILzUIT5tbeMqY8qABiCsRtIjk/2g==}
+    dev: true
+
+  /find-up/4.1.0:
+    resolution: {integrity: sha512-PpOwAdQ/YlXQ2vj8a3h8IipDuYRi3wceVQQGYWxNINccq40Anw7BlsEXCMbt1Zt+OLA6Fq9suIpIWD0OsnISlw==}
+    engines: {node: '>=8'}
+    dependencies:
+      locate-path: 5.0.0
+      path-exists: 4.0.0
+    dev: false
+
+  /import-local/3.1.0:
+    resolution: {integrity: sha512-ASB07uLtnDs1o6EHjKpX34BKYDSqnFerfTOJL2HvMqF70LnxpjkzDB8J44oT9pu4AMPkQwf8jl6szgvNd2tRIg==}
+    engines: {node: '>=8'}
+    hasBin: true
+    dependencies:
+      pkg-dir: 4.2.0
+      resolve-cwd: 3.0.0
+    dev: false
+
+  /locate-path/5.0.0:
+    resolution: {integrity: sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g==}
+    engines: {node: '>=8'}
+    dependencies:
+      p-locate: 4.1.0
+    dev: false
+
+  /p-limit/2.3.0:
+    resolution: {integrity: sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w==}
+    engines: {node: '>=6'}
+    dependencies:
+      p-try: 2.2.0
+    dev: false
+
+  /p-locate/4.1.0:
+    resolution: {integrity: sha512-R79ZZ/0wAxKGu3oYMlz8jy/kbhsNrS7SKZ7PxEHBgJ5+F2mtFW2fK2cOtBh1cHYkQsbzFV7I+EoRKe6Yt0oK7A==}
+    engines: {node: '>=8'}
+    dependencies:
+      p-limit: 2.3.0
+    dev: false
+
+  /p-try/2.2.0:
+    resolution: {integrity: sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==}
+    engines: {node: '>=6'}
+    dev: false
+
+  /path-exists/4.0.0:
+    resolution: {integrity: sha512-ak9Qy5Q7jYb2Wwcey5Fpvg2KoAc/ZIhLSLOSBmRmygPsGwkVVt0fZa0qrtMz+m6tJTAHfZQ8FnmB4MG4LWy7/w==}
+    engines: {node: '>=8'}
+    dev: false
+
+  /pkg-dir/4.2.0:
+    resolution: {integrity: sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==}
+    engines: {node: '>=8'}
+    dependencies:
+      find-up: 4.1.0
+    dev: false
+
+  /pnpm/8.4.0:
+    resolution: {integrity: sha512-oW5jpFgCmXHIVOU5HZLBWGBtCH7K4JSRdpk7/f+Dtp+KhUsX5NQaWzzYyU9TX7eAsfYMko179133gbUS+JTrMw==}
+    engines: {node: '>=16.14'}
+    hasBin: true
+    dev: false
+
+  /resolve-cwd/3.0.0:
+    resolution: {integrity: sha512-OrZaX2Mb+rJCpH/6CpSqt9xFVpN++x01XnN2ie9g6P5/3xelLAkXWVADpdz1IHD/KFfEXyE6V0U01OQ3UO2rEg==}
+    engines: {node: '>=8'}
+    dependencies:
+      resolve-from: 5.0.0
+    dev: false
+
+  /resolve-from/5.0.0:
+    resolution: {integrity: sha512-qYg9KP24dD5qka9J47d0aVky0N+b4fTU89LN9iDnjB5waksiC49rvMB0PrUJQGoTmH50XPiqOvAjDfaijGxYZw==}
+    engines: {node: '>=8'}
+    dev: false
+
+  /tsd-lite/0.7.0_@tsd+typescript@4.9.5:
+    resolution: {integrity: sha512-XhQ7w/RPzfjSb98LIQB1qx7yAvRV6+h5JFP4dCvd79Hbp23X8CCx4EdRAQm6faTkRdprKYvZE8kxlK6LpJp8vg==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@tsd/typescript': 4.x || 5.x
+    dependencies:
+      '@tsd/typescript': 4.9.5
+    dev: true

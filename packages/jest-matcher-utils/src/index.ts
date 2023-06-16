@@ -226,7 +226,7 @@ export const ensureNumbers = (
 };
 
 export const ensureExpectedIsNonNegativeInteger = (
-  expected: unknown,
+  expected: number,
   matcherName: string,
   options?: MatcherHintOptions,
 ): void => {

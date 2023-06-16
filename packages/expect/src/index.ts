@@ -8,7 +8,7 @@
 
 /* eslint-disable local/prefer-spread-eventually */
 
-import {equals, iterableEquality, subsetEquality} from '@jest/expect-utils';
+import {Tester, equals, iterableEquality, subsetEquality} from '@jest/expect-utils';
 import * as matcherUtils from 'jest-matcher-utils';
 import {isPromise} from 'jest-util';
 import {
@@ -46,11 +46,11 @@ import type {
   MatcherContext,
   MatcherState,
   MatcherUtils,
-  MatchersObject,
-  PromiseMatcherFn,
+  // MatchersObject,
+  // PromiseMatcherFn,
   RawMatcherFn,
   SyncExpectationResult,
-  ThrowingMatcherFn,
+  // ThrowingMatcherFn,
 } from './types';
 
 export type {Tester, TesterContext} from '@jest/expect-utils';
@@ -66,12 +66,11 @@ export type {
   MatcherFunctionWithContext,
   MatcherState,
   MatcherUtils,
-  Matchers,
   SyncExpectationResult,
 } from './types';
 
 export class JestAssertionError extends Error {
-  matcherResult?: Omit<SyncExpectationResult, 'message'> & {message: string};
+  matcherResult?: Omit<SyncExpectationResult, 'message'> & {message: string;};
 }
 
 const createToThrowErrorMatchingSnapshotMatcher = function (
@@ -99,17 +98,26 @@ const getPromiseMatcher = (name: string, matcher: RawMatcherFn) => {
   return null;
 };
 
-export const expect: Expect = (actual: any, ...rest: Array<any>) => {
+type NOT = {not: Record<string, ReturnType<typeof makeThrowingMatcher>>;};
+type NOTRES = {not: Record<string, ReturnType<typeof makeResolveMatcher>>;};
+type NOTREJ = {not: Record<string, ReturnType<typeof makeRejectMatcher>>;};
+const _expect: Expect = (actual: any, ...rest: Array<any>) => {
   if (rest.length !== 0) {
     throw new Error('Expect takes at most one argument.');
   }
 
   const allMatchers = getMatchers();
-  const expectation: any = {
-    not: {},
-    rejects: {not: {}},
-    resolves: {not: {}},
-  };
+  const expectation: Record<string, ReturnType<typeof makeThrowingMatcher>> & NOT &
+  {
+    not: Record<string, ReturnType<typeof makeThrowingMatcher>>;
+    rejects: Record<string, ReturnType<typeof makeRejectMatcher>> & NOTREJ,
+    resolves: Record<string, ReturnType<typeof makeResolveMatcher>> & NOTRES,
+  }
+    = {
+      not: {}, //as Record<string, ReturnType<typeof makeThrowingMatcher>>,
+      rejects: {not: {}}, //as Record<string, ReturnType<typeof makeRejectMatcher>> & NOTREJ,
+      resolves: {not: {}} //as Record<string, ReturnType<typeof makeResolveMatcher>> & NOTRES,
+    } as any;
 
   const err = new JestAssertionError();
 
@@ -164,49 +172,49 @@ const makeResolveMatcher =
     isNot: boolean,
     actual: Promise<any>,
     outerErr: JestAssertionError,
-  ): PromiseMatcherFn =>
-  (...args) => {
-    const options = {
-      isNot,
-      promise: 'resolves',
-    };
+  )/* : PromiseMatcherFn */ =>
+    (...args: []) => {
+      const options = {
+        isNot,
+        promise: 'resolves',
+      };
 
-    if (!isPromise(actual)) {
-      throw new JestAssertionError(
-        matcherUtils.matcherErrorMessage(
-          matcherUtils.matcherHint(matcherName, undefined, '', options),
-          `${matcherUtils.RECEIVED_COLOR('received')} value must be a promise`,
-          matcherUtils.printWithType(
-            'Received',
-            actual,
-            matcherUtils.printReceived,
+      if (!isPromise(actual)) {
+        throw new JestAssertionError(
+          matcherUtils.matcherErrorMessage(
+            matcherUtils.matcherHint(matcherName, undefined, '', options),
+            `${matcherUtils.RECEIVED_COLOR('received')} value must be a promise`,
+            matcherUtils.printWithType(
+              'Received',
+              actual,
+              matcherUtils.printReceived,
+            ),
           ),
-        ),
+        );
+      }
+
+      const innerErr = new JestAssertionError();
+
+      return actual.then(
+        result =>
+          makeThrowingMatcher(matcher, isNot, 'resolves', result, innerErr).apply(
+            null,
+            args,
+          ),
+        reason => {
+          outerErr.message =
+            `${matcherUtils.matcherHint(
+              matcherName,
+              undefined,
+              '',
+              options,
+            )}\n\n` +
+            'Received promise rejected instead of resolved\n' +
+            `Rejected to value: ${matcherUtils.printReceived(reason)}`;
+          return Promise.reject(outerErr);
+        },
       );
-    }
-
-    const innerErr = new JestAssertionError();
-
-    return actual.then(
-      result =>
-        makeThrowingMatcher(matcher, isNot, 'resolves', result, innerErr).apply(
-          null,
-          args,
-        ),
-      reason => {
-        outerErr.message =
-          `${matcherUtils.matcherHint(
-            matcherName,
-            undefined,
-            '',
-            options,
-          )}\n\n` +
-          'Received promise rejected instead of resolved\n' +
-          `Rejected to value: ${matcherUtils.printReceived(reason)}`;
-        return Promise.reject(outerErr);
-      },
-    );
-  };
+    };
 
 const makeRejectMatcher =
   (
@@ -215,54 +223,54 @@ const makeRejectMatcher =
     isNot: boolean,
     actual: Promise<any> | (() => Promise<any>),
     outerErr: JestAssertionError,
-  ): PromiseMatcherFn =>
-  (...args) => {
-    const options = {
-      isNot,
-      promise: 'rejects',
-    };
+  )/* : PromiseMatcherFn */ =>
+    (...args: []) => {
+      const options = {
+        isNot,
+        promise: 'rejects',
+      };
 
-    const actualWrapper: Promise<any> =
-      typeof actual === 'function' ? actual() : actual;
+      const actualWrapper: Promise<any> =
+        typeof actual === 'function' ? actual() : actual;
 
-    if (!isPromise(actualWrapper)) {
-      throw new JestAssertionError(
-        matcherUtils.matcherErrorMessage(
-          matcherUtils.matcherHint(matcherName, undefined, '', options),
-          `${matcherUtils.RECEIVED_COLOR(
-            'received',
-          )} value must be a promise or a function returning a promise`,
-          matcherUtils.printWithType(
-            'Received',
-            actual,
-            matcherUtils.printReceived,
+      if (!isPromise(actualWrapper)) {
+        throw new JestAssertionError(
+          matcherUtils.matcherErrorMessage(
+            matcherUtils.matcherHint(matcherName, undefined, '', options),
+            `${matcherUtils.RECEIVED_COLOR(
+              'received',
+            )} value must be a promise or a function returning a promise`,
+            matcherUtils.printWithType(
+              'Received',
+              actual,
+              matcherUtils.printReceived,
+            ),
           ),
-        ),
+        );
+      }
+
+      const innerErr = new JestAssertionError();
+
+      return actualWrapper.then(
+        result => {
+          outerErr.message =
+            `${matcherUtils.matcherHint(
+              matcherName,
+              undefined,
+              '',
+              options,
+            )}\n\n` +
+            'Received promise resolved instead of rejected\n' +
+            `Resolved to value: ${matcherUtils.printReceived(result)}`;
+          return Promise.reject(outerErr);
+        },
+        reason =>
+          makeThrowingMatcher(matcher, isNot, 'rejects', reason, innerErr).apply(
+            null,
+            args,
+          ),
       );
-    }
-
-    const innerErr = new JestAssertionError();
-
-    return actualWrapper.then(
-      result => {
-        outerErr.message =
-          `${matcherUtils.matcherHint(
-            matcherName,
-            undefined,
-            '',
-            options,
-          )}\n\n` +
-          'Received promise resolved instead of rejected\n' +
-          `Resolved to value: ${matcherUtils.printReceived(result)}`;
-        return Promise.reject(outerErr);
-      },
-      reason =>
-        makeThrowingMatcher(matcher, isNot, 'rejects', reason, innerErr).apply(
-          null,
-          args,
-        ),
-    );
-  };
+    };
 
 const makeThrowingMatcher = (
   matcher: RawMatcherFn,
@@ -270,8 +278,8 @@ const makeThrowingMatcher = (
   promise: string,
   actual: any,
   err?: JestAssertionError,
-): ThrowingMatcherFn =>
-  function throwingMatcher(...args): any {
+)/* : ThrowingMatcherFn */ =>
+  function throwingMatcher(...args: []): any {
     let throws = true;
     const utils: MatcherUtils['utils'] = {
       ...matcherUtils,
@@ -363,11 +371,11 @@ const makeThrowingMatcher = (
         matcher[INTERNAL_MATCHER_FLAG] === true
           ? matcher.call(matcherContext, actual, ...args)
           : // It's a trap specifically for inline snapshot to capture this name
-            // in the stack trace, so that it can correctly get the custom matcher
-            // function call.
-            (function __EXTERNAL_MATCHER_TRAP__() {
-              return matcher.call(matcherContext, actual, ...args);
-            })();
+          // in the stack trace, so that it can correctly get the custom matcher
+          // function call.
+          (function __EXTERNAL_MATCHER_TRAP__() {
+            return matcher.call(matcherContext, actual, ...args);
+          })();
 
       if (isPromise(potentialResult)) {
         const asyncError = new JestAssertionError();
@@ -386,16 +394,16 @@ const makeThrowingMatcher = (
     }
   };
 
-expect.extend = (matchers: MatchersObject) =>
-  setMatchers(matchers, false, expect);
+_expect.extend = <T /* extends MatchersObject */>(matchers: T) =>
+  setMatchers(matchers, false, _expect);
 
-expect.addEqualityTesters = customTesters =>
+_expect.addEqualityTesters = (customTesters: Tester[]) =>
   addCustomEqualityTesters(customTesters);
 
-expect.anything = anything;
-expect.any = any;
+_expect.anything = anything;
+_expect.any = any;
 
-expect.not = {
+_expect.not = {
   arrayContaining: arrayNotContaining,
   closeTo: notCloseTo,
   objectContaining: objectNotContaining,
@@ -403,11 +411,11 @@ expect.not = {
   stringMatching: stringNotMatching,
 };
 
-expect.arrayContaining = arrayContaining;
-expect.closeTo = closeTo;
-expect.objectContaining = objectContaining;
-expect.stringContaining = stringContaining;
-expect.stringMatching = stringMatching;
+_expect.arrayContaining = arrayContaining;
+_expect.closeTo = closeTo;
+_expect.objectContaining = objectContaining;
+_expect.stringContaining = stringContaining;
+_expect.stringMatching = stringMatching;
 
 const _validateResult = (result: any) => {
   if (
@@ -419,10 +427,10 @@ const _validateResult = (result: any) => {
   ) {
     throw new Error(
       'Unexpected return from a matcher function.\n' +
-        'Matcher functions should ' +
-        'return an object in the following format:\n' +
-        '  {message?: string | function, pass: boolean}\n' +
-        `'${matcherUtils.stringify(result)}' was returned`,
+      'Matcher functions should ' +
+      'return an object in the following format:\n' +
+      '  {message?: string | function, pass: boolean}\n' +
+      `'${matcherUtils.stringify(result)}' was returned`,
     );
   }
 };
@@ -452,14 +460,18 @@ function hasAssertions(...args: Array<unknown>): void {
 }
 
 // add default jest matchers
-setMatchers(matchers, true, expect);
-setMatchers(spyMatchers, true, expect);
-setMatchers(toThrowMatchers, true, expect);
+const e1 = setMatchers(matchers, true, _expect);
+const e2 = setMatchers(spyMatchers, true, e1);
+const e3 = setMatchers(toThrowMatchers, true, e2);
 
-expect.assertions = assertions;
-expect.hasAssertions = hasAssertions;
-expect.getState = getState;
-expect.setState = setState;
-expect.extractExpectedAssertionsErrors = extractExpectedAssertionsErrors;
+_expect.assertions = assertions;
+_expect.hasAssertions = hasAssertions;
+_expect.getState = getState;
+_expect.setState = setState;
+_expect.extractExpectedAssertionsErrors = extractExpectedAssertionsErrors;
 
-export default expect;
+// e1(123).toBe(32);
+// e3('a').toBe("");
+// e3(1).toHaveLength()
+export const expect = e3;
+// export default expect;

@@ -1,0 +1,87 @@
+{
+  "name": "jest-web",
+  "description": "Delightful JavaScript Testing.",
+  "version": "29.5.0",
+  "main": "./build/index.cjs.js",
+  "module": "./build/index.es.js",
+  "browser": "./build/index.umd.js",
+  "types": "./build/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "default": "./build/index.es.js",
+      "require": "./build/index.cjs.js",
+      "import": "./build/index.es.js"
+    },
+    "./package.json": "./package.json",
+    "./bin/jest": "./bin/jest.js"
+  },
+  "dependencies": {
+    "@jest/types": "workspace:^",
+    "jest-get-type": "workspace:^",
+    "@jest/expect-utils": "workspace:^",
+    "jest-matcher-utils": "workspace:^",
+    "pretty-format": "workspace:^",
+    "diff-sequences": "workspace:^",
+    "jest-diff": "workspace:^",
+    "jest-message-util": "workspace:^",
+    "expect": "workspace:^",
+    "jest-mock": "workspace:^",
+    "jest-circus": "workspace:^",
+    "pnpm": "^8.4.0"
+  },
+  "devDependencies": {
+    "@tsd/typescript": "^4.9.0",
+    "tsd-lite": "^0.7.0",
+    "vite": "^4.3.4",
+    "vite-plugin-dts": "^2.3.0"
+  },
+  "peerDependencies": {
+    "node-notifier": "^8.0.1 || ^9.0.0 || ^10.0.0"
+  },
+  "peerDependenciesMeta": {
+    "node-notifier": {
+      "optional": true
+    }
+  },
+  "bin": "./bin/jest.js",
+  "engines": {
+    "node": "^14.15.0 || ^16.10.0 || >=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/facebook/jest.git",
+    "directory": "packages/jest"
+  },
+  "homepage": "https://jestjs.io/",
+  "license": "MIT",
+  "keywords": [
+    "ava",
+    "babel",
+    "coverage",
+    "easy",
+    "expect",
+    "facebook",
+    "immersive",
+    "instant",
+    "jasmine",
+    "jest",
+    "jsdom",
+    "mocha",
+    "mocking",
+    "painless",
+    "qunit",
+    "runner",
+    "sandboxed",
+    "snapshot",
+    "tap",
+    "tape",
+    "test",
+    "testing",
+    "typescript",
+    "watch"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

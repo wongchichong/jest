@@ -7,7 +7,7 @@
 
 /* eslint-disable local/ban-types-eventually */
 
-import style = require('ansi-styles');
+import * as style from 'ansi-styles';
 import {
   printIteratorEntries,
   printIteratorValues,
@@ -231,69 +231,67 @@ function printComplexValue(
     return hitMaxDepth
       ? '[Arguments]'
       : `${min ? '' : 'Arguments '}[${printListItems(
-          val,
-          config,
-          indentation,
-          depth,
-          refs,
-          printer,
-        )}]`;
-  }
-  if (isToStringedArrayType(toStringed)) {
-    return hitMaxDepth
-      ? `[${val.constructor.name}]`
-      : `${
-          min
-            ? ''
-            : !config.printBasicPrototype && val.constructor.name === 'Array'
-            ? ''
-            : `${val.constructor.name} `
-        }[${printListItems(val, config, indentation, depth, refs, printer)}]`;
-  }
-  if (toStringed === '[object Map]') {
-    return hitMaxDepth
-      ? '[Map]'
-      : `Map {${printIteratorEntries(
-          val.entries(),
-          config,
-          indentation,
-          depth,
-          refs,
-          printer,
-          ' => ',
-        )}}`;
-  }
-  if (toStringed === '[object Set]') {
-    return hitMaxDepth
-      ? '[Set]'
-      : `Set {${printIteratorValues(
-          val.values(),
-          config,
-          indentation,
-          depth,
-          refs,
-          printer,
-        )}}`;
-  }
-
-  // Avoid failure to serialize global window object in jsdom test environment.
-  // For example, not even relevant if window is prop of React element.
-  return hitMaxDepth || isWindow(val)
-    ? `[${getConstructorName(val)}]`
-    : `${
-        min
-          ? ''
-          : !config.printBasicPrototype && getConstructorName(val) === 'Object'
-          ? ''
-          : `${getConstructorName(val)} `
-      }{${printObjectProperties(
         val,
         config,
         indentation,
         depth,
         refs,
         printer,
+      )}]`;
+  }
+  if (isToStringedArrayType(toStringed)) {
+    return hitMaxDepth
+      ? `[${val.constructor.name}]`
+      : `${min
+        ? ''
+        : !config.printBasicPrototype && val.constructor.name === 'Array'
+          ? ''
+          : `${val.constructor.name} `
+      }[${printListItems(val, config, indentation, depth, refs, printer)}]`;
+  }
+  if (toStringed === '[object Map]') {
+    return hitMaxDepth
+      ? '[Map]'
+      : `Map {${printIteratorEntries(
+        val.entries(),
+        config,
+        indentation,
+        depth,
+        refs,
+        printer,
+        ' => ',
       )}}`;
+  }
+  if (toStringed === '[object Set]') {
+    return hitMaxDepth
+      ? '[Set]'
+      : `Set {${printIteratorValues(
+        val.values(),
+        config,
+        indentation,
+        depth,
+        refs,
+        printer,
+      )}}`;
+  }
+
+  // Avoid failure to serialize global window object in jsdom test environment.
+  // For example, not even relevant if window is prop of React element.
+  return hitMaxDepth || isWindow(val)
+    ? `[${getConstructorName(val)}]`
+    : `${min
+      ? ''
+      : !config.printBasicPrototype && getConstructorName(val) === 'Object'
+        ? ''
+        : `${getConstructorName(val)} `
+    }{${printObjectProperties(
+      val,
+      config,
+      indentation,
+      depth,
+      refs,
+      printer,
+    )}}`;
 }
 
 function isNewPlugin(plugin: Plugin): plugin is NewPlugin {
@@ -314,22 +312,22 @@ function printPlugin(
     printed = isNewPlugin(plugin)
       ? plugin.serialize(val, config, indentation, depth, refs, printer)
       : plugin.print(
-          val,
-          valChild => printer(valChild, config, indentation, depth, refs),
-          str => {
-            const indentationNext = indentation + config.indent;
-            return (
-              indentationNext +
-              str.replace(NEWLINE_REGEXP, `\n${indentationNext}`)
-            );
-          },
-          {
-            edgeSpacing: config.spacingOuter,
-            min: config.min,
-            spacing: config.spacingInner,
-          },
-          config.colors,
-        );
+        val,
+        valChild => printer(valChild, config, indentation, depth, refs),
+        str => {
+          const indentationNext = indentation + config.indent;
+          return (
+            indentationNext +
+            str.replace(NEWLINE_REGEXP, `\n${indentationNext}`)
+          );
+        },
+        {
+          edgeSpacing: config.spacingOuter,
+          min: config.min,
+          spacing: config.spacingInner,
+        },
+        config.colors,
+      );
   } catch (error: any) {
     throw new PrettyFormatPluginError(error.message, error.stack);
   }

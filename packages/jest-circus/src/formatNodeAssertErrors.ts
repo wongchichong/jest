@@ -5,7 +5,18 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import {AssertionError} from 'assert';
+// import {AssertionError} from 'assert';
+export class AssertionError extends Error {
+  expected: any;
+  actual: any;
+  generatedMessage: any;
+  operator: any;
+  constructor(message: string) {
+    super(message);
+    this.name = 'AssertionError';
+  }
+}
+
 import chalk = require('chalk');
 import type {Circus} from '@jest/types';
 import {
@@ -94,9 +105,9 @@ const operatorMessage = (operator: string | undefined) => {
 const assertThrowingMatcherHint = (operatorName: string) =>
   operatorName
     ? chalk.dim('assert') +
-      chalk.dim(`.${operatorName}(`) +
-      chalk.red('function') +
-      chalk.dim(')')
+    chalk.dim(`.${operatorName}(`) +
+    chalk.red('function') +
+    chalk.dim(')')
     : '';
 
 const assertMatcherHint = (

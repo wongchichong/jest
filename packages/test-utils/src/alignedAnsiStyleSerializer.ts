@@ -6,7 +6,7 @@
  */
 
 import ansiRegex = require('ansi-regex');
-import style = require('ansi-styles');
+import * as style from  'ansi-styles';
 import type {NewPlugin} from 'pretty-format';
 
 export const alignedAnsiStyleSerializer: NewPlugin = {

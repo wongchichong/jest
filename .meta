@@ -1,0 +1,11 @@
+{
+    "ignore": [
+        ".git",
+        ".vagrant",
+        ".vscode",
+        "node_modules"
+    ],
+    "projects": {
+        "packages/jest-dom": "https://github.com/wongchichong/jest-dom"
+    }
+}
